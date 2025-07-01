@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LOHA | Générateur de QR Code</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    :root {
+      --primary-color: #0d47a1;
+      --background-color: #1a1a1a;
+      --text-color: #e0e0e0;
+      --card-color: #2e2e2e;
+      --accent-color: #1976d2;
+    }
+
+    * {
+      transition: all 0.3s ease;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 20px;
+      width: 100%;
+      text-align: center;
+      font-size: 1.7rem;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+      animation: fadeInDown 1s ease;
+      position: relative;
+    }
+
+    .logo {
+      position: absolute;
+      left: 20px;
+      top: 15px;
+      width: 40px;
+      height: 40px;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/5/55/QR_icon.svg') no-repeat center center;
+      background-size: contain;
+      animation: rotateLogo 6s infinite linear;
+    }
+
+    .container {
+      background-color: var(--card-color);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      margin-top: 40px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      animation: fadeInUp 1s ease;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-weight: 700;
+      color: var(--accent-color);
+      animation: bounce 2s infinite;
+    }
+
+    input[type="text"] {
+      width: 90%;
+      padding: 12px;
+      font-size: 1rem;
+      border: 1px solid #555;
+      background-color: #121212;
+      color: var(--text-color);
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 12px 25px;
+      font-size: 1rem;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      animation: pulse 2s infinite;
+    }
+
+    button:hover {
+      background-color: var(--accent-color);
+      transform: scale(1.05);
+    }
+
+    #qrcode {
+      margin-top: 20px;
+      animation: zoomIn 0.6s ease;
+    }
+
+    #downloadLink {
+      display: none;
+      margin-top: 15px;
+      display: inline-block;
+      color: var(--accent-color);
+      text-decoration: underline;
+      font-weight: bold;
+    }
+
+    footer {
+      margin-top: 50px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #bbb;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes rotateLogo {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(25, 118, 210, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(25, 118, 210, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(25, 118, 210, 0); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo"></div>
+    LOHA - Générateur de QR Code
+  </header>
+
+  <div class="container">
+    <h2>Entrer un code numérique</h2>
+    <input type="text" id="codeInput" placeholder="Ex: 8, 5, 4, 4" />
+    <br />
+    <button onclick="generateQRCode()">Générer le QR Code</button>
+    <div id="qrcode"></div>
+    <a id="downloadLink" download="qrcode.png">📥 Télécharger le QR Code</a>
+  </div>
+
+  <footer>
+    &copy; 2025 LOHA. Tous droits réservés. Réalisé par Akiti Losseni. Contact : 0172-1963-67
+  </footer>
+
+  <script>
+    function generateQRCode() {
+      const code = document.getElementById("codeInput").value.trim();
+      const qrcodeContainer = document.getElementById("qrcode");
+      const downloadLink = document.getElementById("downloadLink");
+
+      qrcodeContainer.innerHTML = "";
+      downloadLink.style.display = "none";
+
+      if (code === "") {
+        alert("Veuillez entrer un code avant de générer.");
+        return;
+      }
+
+      const qr = new QRCode(qrcodeContainer, {
+        text: code,
+        width: 256,
+        height: 256,
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      setTimeout(() => {
+        const canvas = qrcodeContainer.querySelector("canvas");
+        if (canvas) {
+          const imgData = canvas.toDataURL("image/png");
+          downloadLink.href = imgData;
+          downloadLink.style.display = "inline-block";
+        }
+      }, 500);
+    }
+  </script>
+</body>
+</html>
